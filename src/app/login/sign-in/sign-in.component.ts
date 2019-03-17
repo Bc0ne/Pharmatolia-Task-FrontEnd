@@ -55,8 +55,7 @@ export class SignInComponent implements OnInit {
     this.userService.user.photoUrl = user.photoUrl;
 
     this.onLoginSucceed.emit(null);
-
-    localStorage.setItem(TokenValues.UserId, JSON.stringify(user.token));
+    localStorage.setItem(TokenValues.Token, JSON.stringify(user.token));
     localStorage.setItem(TokenValues.UserId, JSON.stringify(user.userId));
 
     this.router.navigate(['/dashboard']);

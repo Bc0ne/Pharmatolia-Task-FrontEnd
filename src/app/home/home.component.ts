@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { UserService } from '../_services/user-service.service';
 import { User } from '../_models/user.model';
 import { TokenValues } from '../_models/token-values';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -17,13 +18,10 @@ export class HomeComponent implements OnInit {
   amount: number;
   message: string;
 
-  constructor(private userService: UserService, private modalService: BsModalService) { }
+  constructor(private userService: UserService, private modalService: BsModalService, private router: Router) { }
 
   ngOnInit() {
-
-    if (this.userService.user === null || this.userService.user === undefined) {
       this.getUser();
-    }
   }
 
   openModal(template: TemplateRef<any>) {
@@ -35,7 +33,8 @@ export class HomeComponent implements OnInit {
   }
 
   updateProfile() {
-    this.userService.updateUserById({ firstName: this.userService.user.firstName, lastName: this.userService.user.lastName })
+    const userId = JSON.parse(localStorage.getItem(TokenValues.UserId));
+    this.userService.updateUserById(userId, {firstName: this.userService.user.firstName, lastName: this.userService.user.lastName })
       .subscribe((data: any) => {
         this.closeModal();
       });
@@ -43,6 +42,7 @@ export class HomeComponent implements OnInit {
 
   getUser() {
     const userId = JSON.parse(localStorage.getItem(TokenValues.UserId));
+    this.userService.user = new User();
     this.userService.getUserById(userId).subscribe((data: any) => {
       this.userService.user.firstName = data.firstName;
       this.userService.user.lastName = data.lastName;
@@ -51,6 +51,10 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  signOut(){
+    this.userService.logOut();
+    this.router.navigate(['login']);
+  }
 
   findTwoIntegers() {
     let integers = this.integers.split(',').map(Number);

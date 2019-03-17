@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { SignUpModel } from '../../_models/signUp.model';
 import { UserService } from '../../_services/user-service.service';
+import { TokenValues } from 'src/app/_models/token-values';
 
 @Component({
   selector: 'app-sign-up',
@@ -12,6 +13,7 @@ import { UserService } from '../../_services/user-service.service';
 })
 export class SignUpComponent implements OnInit {
 
+  errorMessage: string;
   signUpForm: FormGroup;
   signUpModel: SignUpModel = new SignUpModel();
   @Output() onSignUpSucceed = new EventEmitter();
@@ -36,17 +38,27 @@ export class SignUpComponent implements OnInit {
         const user = { ...this.signUpModel, ...this.signUpForm.value };
         this.userService.signUp(user).subscribe(
           result => this.onSuccess(result),
-          error => console.log("error")
+          error => this.onFailure(error)
         );
       }
     }
   }
 
   onSuccess(user){
-    console.log("Created");
+    this.userService.user.firstName = user.firstName;
+    this.userService.user.lastName = user.lastName;
+    this.userService.user.email = user.email;
+    this.userService.user.photoUrl = user.photoUrl;
+    localStorage.setItem(TokenValues.Token, JSON.stringify(user.token));
+    localStorage.setItem(TokenValues.UserId, JSON.stringify(user.userId));
+
     this.onSignUpSucceed.emit(null);
-    console.log(user);
+
     this.router.navigate(['/dashboard']);
+  }
+
+  onFailure(error){
+    this.errorMessage = error.error.message;
   }
 
 }

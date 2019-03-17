@@ -8,17 +8,33 @@
     </div>
     <div class="row">
         <div class="form-group col-sm-12 col-sm-offset-2 col-md-12 col-md-offset-2">
-            <input type="email" class="form-control login" formControlName="email" placeholder="Email">
+            <input type="email" class="form-control login" formControlName="email" placeholder="Email" required>
+            <div *ngIf="loginForm.get('email').errors?.required && loginForm.get('email').touched">
+                <br>
+                <span class="alert alert-danger">
+                    Email is required
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-12 col-sm-offset-2 col-md-12 col-md-offset-2">
+            <input type="password" class="form-control" formControlName="password" placeholder="Password" required>
+            <div *ngIf="loginForm.get('password').errors?.required && loginForm.get('password').touched">
+                <br>
+                <span class="alert alert-danger">
+                    Password is required
+                </span>
+            </div>
+
         </div>
     </div>
     <div class="row">
         <div class="form-group col-sm-12 col-sm-offset-2 col-md-12 col-md-offset-2">
-            <input type="password" class="form-control" formControlName="password" placeholder="Password">
-        </div>
-    </div>
-    <div class="row">
-        <div class="form-group col-sm-12 col-sm-offset-2 col-md-12 col-md-offset-2">
-            <button type="submit" class="form-control btn btn-success">Sign In</button>
+            <button type="submit" class="form-control btn btn-success"
+                [disabled]="!(loginForm.get('email').valid && loginForm.get('password').valid)">Sign In</button>
         </div>
     </div>
 </form>
