@@ -1,0 +1,89 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4"></div>
+    <h1>Welcome to Dashboard
+    </h1>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      <div class="row">
+        <div class="col-md-12">
+          <img [src]="this.userService.user?.photoUrl" width="250px" height="250px">
+        </div>
+      </div>
+      <div class="row" *ngIf="userService.user">
+        <div class="col-md-12">
+          <h2>{{userService.user?.firstName + ' ' + userService.user?.lastName}}</h2>
+          <span>{{userService.user.email}}</span>
+        </div>
+      </div>
+      <br>
+      <input type="button" value="Update Profile" class="btn btn-info" (click)="openModal(template)">
+      <br>
+      <input type="button" value="Sign out" class="btn btn-danger" (click)="signOut()">
+      <ng-template #template>
+        <div class="modal-header">
+          <h4 class="modal-title pull-center">Update profile</h4>
+          <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="updateProfile()" #form="ngForm">
+            <div class="form-group row">
+              <div class="col-md-12">
+                <input type="input" class="form-control" [(ngModel)]="userService.user.firstName" #firstName="ngModel"
+                  name=firstName required placeholder="FirstName">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-md-12">
+                <input type="input" class="form-control" [(ngModel)]="userService.user.lastName" #lastName="ngModel"
+                  name=lastName required placeholder="FirstName">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-md-12">
+                <input type="submit" class="btn btn-info" value="Update profile">
+              </div>
+            </div>
+          </form>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="col-md-6">
+      <form #form="ngForm">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-2">
+            <h3>Distinct Integers</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <input type="input" class="form-control" [(ngModel)]="integers"
+              placeholder="Enter some distinct integers, seperate each integer by comma separator." required
+              name="integers" #distinctIntegers="ngModel">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-12">
+            <input type="input" class="form-control" placeholder="Enter your amount" [(ngModel)]="amount" required
+              name="amount" #sum="ngModel">
+          </div>
+        </div>
+
+        <input type="button" class="btn btn-success" value="Find the two Integer"
+          [disabled]="!(distinctIntegers.valid && sum.valid)" (click)="findTwoIntegers()">
+      </form>
+      <hr>
+      <div *ngIf="message" class="row">
+        <div class="col-md-12">
+          <span class="alert alert-info">{{message}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { LoginModel } from '../../_models/login.model';
+import { UserService } from '../../_services/user-service.service';
+import { User } from '../../_models/user.model';
+import { TokenValues } from 'src/app/_models/token-values';
+
+@Component({
+  selector: 'app-sign-in',
+  templateUrl: './sign-in.component.html',
+  styleUrls: ['./sign-in.component.css']
+})
+export class SignInComponent implements OnInit {
+
+  loginForm: FormGroup;
+  login: LoginModel = new LoginModel();
+
+  errorMessage: string;
+  @Output() onLoginSucceed = new EventEmitter();
+
+  constructor(private fb: FormBuilder, private router: Router, private userService: UserService) { }
+
+  ngOnInit() {
+    this.userService.user = new User();
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.min(8)]],
+      rememberMe: false
+    });
+  }
+
+  signIn(): void {
+    if (this.loginForm.valid) {
+      if (this.loginForm.dirty) {
+
+        const user = { ...this.login, ...this.loginForm.value }
+        delete user.rememberMe;
+        this.userService.signIn(user).subscribe(
+
+          user => this.onLoginSuccess(user),
+          error => {
+            this.errorMessage = error.error.message;
+          }
+        );
+      }
+    }
+  }
+
+  onLoginSuccess(user): void {
+    this.userService.user.firstName = user.firstName;
+    this.userService.user.lastName = user.lastName;
+    this.userService.user.email = user.email;
+    this.userService.user.photoUrl = user.photoUrl;
+
+    this.onLoginSucceed.emit(null);
+
+    localStorage.setItem(TokenValues.UserId, JSON.stringify(user.token));
+    localStorage.setItem(TokenValues.UserId, JSON.stringify(user.userId));
+
+    this.router.navigate(['/dashboard']);
+  }
+}
